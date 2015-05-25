@@ -15,6 +15,7 @@ let
   ip = "${pkgs.iproute}/sbin/ip";
   bash = "${pkgs.bash}/bin/bash";
   xargs = "${pkgs.findutils}/bin/xargs";
+  fgrep = "${pkgs.gnugrep}/bin/fgrep";
 
   retry-wrapper = script: pkgs.writeScript "retry-${script.name}" ''
     ${retry} ${script}
@@ -44,7 +45,7 @@ let
 
     signature=$(echo -n $date | ${openssl} dgst -binary -sha1 -hmac $1 | ${base64})
     auth_header="X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId=$2,Algorithm=HmacSHA1,Signature=$signature"
-    hostname=$(${hostname}).${zone}
+    hostname=$(${hostname})
     record_value=$(${wget} http://169.254.169.254/latest/meta-data/${query})
 
     ${curl-nofail} -d @/dev/stdin \
@@ -87,10 +88,15 @@ let
     # applying the hostname from UserData if any:
     set -- $(${curl} http://169.254.169.254/latest/user-data | ${jq} -r .hostname)
     if [ -z $1 ]; then
-      echo "current hostname: $(${hostname})"
+      echo "using current hostname: $HOSTNAME"
     else
       echo "setting hostname from EC2 user-data: '$1'"
       ${hostname} $1
+    fi
+
+    if ! ${fgrep} -q ${zone} <<< $HOSTNAME; then
+      echo "appending zone to hostname: $HOSTNAME.${zone}"
+      ${hostname} $HOSTNAME.${zone}
     fi
 
     # registering route 53 hostnames if any:
