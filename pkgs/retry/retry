@@ -4,6 +4,8 @@
 #
 set -euf
 
+export PATH=@coreutils@/bin"${PATH+:$PATH}"
+
 # By default try to run command 10 times with a delay of 3s between retries.
 retry_count=${retry_count-10}
 retry_delay=${retry_delay-3}

@@ -1,12 +1,17 @@
-{ stdenv }:
+{ stdenv, coreutils }:
 
 stdenv.mkDerivation {
   name = "retry";
 
+  # Used by substituteAll.
+  inherit coreutils;
+
   buildCommand = ''
-    install -Dm755 $script $out/bin/retry
+    mkdir -p $out/bin
+    substituteAll $script $out/bin/retry
+    chmod +x $out/bin/retry
   '';
-    
+
   script = ./retry;
 
   meta = with stdenv.lib; {
