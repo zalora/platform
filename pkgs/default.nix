@@ -310,8 +310,8 @@ in rec {
 
   thumbor = (import ./thumbor { inherit pkgs newrelic-python statsd; }).thumbor;
 
-  upcast = pkgs.haskellPackages.callPackage ./upcast {
-    inherit awsEc2 vkPosixPty vkAwsRoute53;
+  upcast = pkgs.haskellngPackages.callPackage ./upcast {
+    inherit vk-posix-pty;
   };
 
   xd = pkgs.callPackage ./xd {};
@@ -367,7 +367,7 @@ in rec {
   servantClient = pkgs.haskellPackages.callPackage ./servant-client { inherit servant servantServer; };
   servantServer = pkgs.haskellPackages.callPackage ./servant-server { inherit servant waiAppStatic; };
   vkAwsRoute53 = pkgs.haskellPackages.callPackage ./vk-aws-route53 {};
-  vkPosixPty = pkgs.haskellPackages.callPackage ./vk-posix-pty {};
+  vk-posix-pty = pkgs.haskellPackages.callPackage ./vk-posix-pty {};
   waiAppStatic = pkgs.haskellPackages.callPackage ./wai-app-static {};
 
   #
