@@ -291,6 +291,7 @@ in rec {
   percona-toolkit = import ./percona-toolkit { inherit perlPackages fetchurl; };
 
   php54 = pkgs.callPackage ./php/5.4.nix {};
+  php53 = pkgs.callPackage ./php/5.3.nix {};
 
   pivotal_agent = pkgs.callPackage ./pivotal_agent {};
 
