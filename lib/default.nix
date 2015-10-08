@@ -5,7 +5,7 @@ in rec {
 
   makeBinPath = makeSearchPath "bin";
 
-  exportSessionVariables = mapcats (k: v: "export ${k}=${v}") {
+  exportSessionVariables = mapcats (k: v: "[[ -f ${v} ]] && export ${k}=${v}") {
 
     TZDIR = "${sdk.tzdata}/share/zoneinfo";
 
