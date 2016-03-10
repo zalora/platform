@@ -287,7 +287,7 @@ in rec {
   perf-map-agent = import ./perf-map-agent
     { inherit (pkgs) stdenv fetchgit cmake openjdk; };
 
-  inherit (pkgs.callPackage ./php {}) php53 php54;
+  inherit (pkgs.callPackage ./php {}) php53 php54 php56 php70;
 
   pivotal_agent = pkgs.callPackage ./pivotal_agent {};
 
