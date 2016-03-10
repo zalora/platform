@@ -7,12 +7,9 @@
 let
 
   generic =
-    { version, sha256, url ? "http://www.php.net/distributions/php-${version}.tar.bz2" }:
+    { version, sha256 }:
 
-    let
-      use-php53 = lib.versionOlder "5.3.0" version && lib.versionOlder version "5.4.0";
-      use-php7 = lib.versionAtLeast version "7.0";
-    in
+    let php7 = lib.versionAtLeast version "7.0"; in
 
     composableDerivation.composableDerivation {} (fixed: {
 
@@ -23,6 +20,8 @@ let
       enableParallelBuilding = true;
 
       buildInputs = [ flex bison pkgconfig ];
+
+      configureFlags = ["EXTENSION_DIR=$(out)/lib/php/extensions"];
 
       flags = {
 
@@ -216,7 +215,7 @@ let
         imapSupport = config.php.imap or true;
         ldapSupport = config.php.ldap or true;
         mhashSupport = config.php.mhash or true;
-        mysqlSupport = (!use-php7) && (config.php.mysql or true);
+        mysqlSupport = (!php7) && (config.php.mysql or true);
         mysqliSupport = config.php.mysqli or true;
         pdo_mysqlSupport = config.php.pdo_mysql or true;
         libxml2Support = config.php.libxml2 or true;
@@ -224,7 +223,7 @@ let
         bcmathSupport = config.php.bcmath or true;
         socketsSupport = config.php.sockets or true;
         curlSupport = config.php.curl or true;
-        curlWrappersSupport = (!use-php7) && (config.php.curlWrappers or true);
+        curlWrappersSupport = (!php7) && (config.php.curlWrappers or true);
         gettextSupport = config.php.gettext or true;
         pcntlSupport = config.php.pcntl or true;
         postgresqlSupport = config.php.postgresql or true;
@@ -245,7 +244,7 @@ let
         ftpSupport = config.php.ftp or true;
         fpmSupport = config.php.fpm or true;
         gmpSupport = config.php.gmp or true;
-        mssqlSupport = (!use-php7) && (config.php.mssql or (!stdenv.isDarwin));
+        mssqlSupport = (!php7) && (config.php.mssql or (!stdenv.isDarwin));
         ztsSupport = config.php.zts or false;
         calendarSupport = config.php.calendar or true;
       };
@@ -271,7 +270,8 @@ let
       '';
 
       src = fetchurl {
-        inherit url sha256;
+        url = "http://www.php.net/distributions/php-${version}.tar.bz2";
+        inherit sha256;
       };
 
       meta = with stdenv.lib; {
@@ -281,11 +281,7 @@ let
         maintainers = with maintainers; [ globin ];
       };
 
-      patches = if use-php53
-        then [ ./fix-paths-php53.patch ]
-        else if use-php7
-        then [ ./fix-paths-php7.patch ]
-        else [ ./fix-paths.patch ];
+      patches = if !php7 then [ ./fix-paths.patch ] else [ ./fix-paths-php7.patch ];
 
     });
 
@@ -303,19 +299,18 @@ in {
   };
 
   php55 = generic {
-    version = "5.5.29";
-    sha256 = "0imr8c48ffjhc2zm96ndq92z3736xrm12hd5c1lssz67xiwybkpv";
+    version = "5.5.32";
+    sha256 = "1vljdvyqsq0vas4yhvpqycqyxl2gfndbmak6cfgxn1cfvc4c3wmh";
   };
 
   php56 = generic {
-    version = "5.6.13";
-    sha256 = "14zq40j229salk0wp7inl4jvj3xff03bz7g5xn8ipd5skiy86n33";
+    version = "5.6.18";
+    sha256 = "1vgl2zjq6ws5cjjb3llhwpfwg9gasq3q84ibdv9hj8snm4llmkf3";
   };
 
-  php70 = lib.lowPrio (generic {
-    version = "7.0.0beta1";
-    url = "https://downloads.php.net/~ab/php-7.0.0beta1.tar.bz2";
-    sha256 = "1pj3ysfhswg2r370ivp33fv9zbcl3yvhmxgnc731k08hv6hmd984";
-  });
+  php70 = generic {
+    version = "7.0.2";
+    sha256 = "0di2vallv5kry85l67za25nq4f2hjr8fad5j0c06nb69v7xpa6wv";
+  };
 
 }
