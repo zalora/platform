@@ -1,17 +1,25 @@
-{ fetchurl, stdenv, unzip }:
-let
-  version = "0.6.9";
-in stdenv.mkDerivation rec {
+{ stdenv, lib, buildGoPackage, fetchFromGitHub }:
+
+buildGoPackage rec {
   name = "terraform-${version}";
-  src = fetchurl {
-    url = "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_linux_amd64.zip";
-    sha256 = "1rpsmdlsz2mvaj57gyyjh4c6ygw7pd0lpxgqxx3rzgk5w5nygly7";
+  version = "0.7.0";
+  rev = "v${version}";
+
+  goPackagePath = "github.com/hashicorp/terraform";
+
+  src = fetchFromGitHub {
+    inherit rev;
+    owner = "hashicorp";
+    repo = "terraform";
+    sha256 = "0k5d6zph6sq1qg8vi5jmk7apy6v67xn5i7rqjamyr5an7lpxssc9";
   };
-  buildInputs = [ unzip ];
-  sourceRoot = ".";
-  installPhase = ''
-    mkdir -p $out/bin
-    mv $sourceRoot/terraform* $out/bin/
-    chmod +x $out/bin/*
+
+  postInstall = ''
+    # remove all plugins, they are part of the main binary now
+    for i in $bin/bin/*; do
+      if [[ $(basename $i) != terraform ]]; then
+        rm "$i"
+      fi
+    done
   '';
 }

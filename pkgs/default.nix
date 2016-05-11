@@ -371,7 +371,9 @@ in rec {
 
   syslog-ng = pkgs.callPackage ./syslog-ng {};
 
-  terraform = pkgs.callPackage ./terraform {};
+  terraform = (pkgs.callPackage ./terraform {
+    inherit (pkgs.go16Packages) buildGoPackage;
+  }).bin;
 
   thumbor = (import ./thumbor { inherit pkgs newrelic-python statsd tornado; }).thumbor;
 
@@ -562,7 +564,7 @@ in rec {
     ];
     buildInputs = [ pkgs.pkgconfig ];
   };
-  
+
   lz4 = fns.buildPecl rec {
      name = "lz4";
      src = pkgs.fetchFromGitHub {
