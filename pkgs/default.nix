@@ -524,26 +524,63 @@ in rec {
   # php libraries
   #
 
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L35-L40
   imagick = fns.buildPecl {
-    name = "imagick-3.1.2";
-    sha256 = "14vclf2pqcgf3w8nzqbdw0b9v30q898344c84jdbw2sa62n6k1sj";
+    name = "imagick-3.4.0RC4";
+    sha256 = "0fdkzdv3r8sm6y1x11kp3rxsimq6zf15xvi0mhn57svmnan4zh0i";
+    configureFlags = "--with-imagick=${pkgs.imagemagick}";
     buildInputs = [ pkgs.pkgconfig ];
-    configureFlags = [
-      "--with-imagick=${imagemagick}"
-    ];
-
-    NIX_CFLAGS_COMPILE = "-I${imagemagick}/include/ImageMagick-6";
   };
 
-  # Because the package in Nixpkgs doesn't have --enable-memcached-json
-  memcached = fns.buildPecl {
-    name = "memcached-2.2.0";
-    sha256 = "0n4z2mp4rvrbmxq079zdsrhjxjkmhz6mzi7mlcipz02cdl7n1f8p";
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L66-L82
+  # Not released yet
+  memcached = fns.buildPecl rec {
+    name = "memcached-php7";
+
+    src = pkgs.fetchgit {
+      url = "https://github.com/php-memcached-dev/php-memcached";
+      rev = "e573a6e8fc815f12153d2afd561fc84f74811e2f";
+      sha256 = "13y5p6mrm4k9f6gn3iszfdjdn136myd00vbvwvngjbpg0jpgvb7p";
+    };
+
     configureFlags = [
       "--enable-memcached-json=yes"
       "--with-zlib-dir=${pkgs.zlib}"
       "--with-libmemcached-dir=${pkgs.libmemcached}"
     ];
+
     buildInputs = with pkgs; [ pkgconfig cyrus_sasl ];
+  };
+
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L95-L102
+  xdebug = fns.buildPecl {
+    name = "xdebug-2.4.0RC3";
+
+    sha256 = "06ppsihw4cl8kxmywvic6wsm4ps9pvsns2vbab9ivrfyp8b6h5dy";
+
+    doCheck = true;
+    checkTarget = "test";
+  };
+
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L125-L140
+  # Not released yet
+  zmq = fns.buildPecl rec {
+    name = "zmq-php7";
+
+    src = pkgs.fetchgit {
+      url = "https://github.com/mkoppanen/php-zmq";
+      rev = "94d2b87d195f870775b153b42c29f30da049f4db";
+      sha256 = "51a25b1029800d8abe03c5c08c50d6aee941c95c741dc22d2f853052511f4296";
+    };
+
+    configureFlags = [
+      "--with-zmq=${pkgs.zeromq2}"
+    ];
+
+    buildInputs = [ pkgs.pkgconfig ];
   };
 }
