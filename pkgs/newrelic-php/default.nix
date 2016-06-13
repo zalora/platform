@@ -3,11 +3,11 @@
 stdenv.mkDerivation rec {
 
   name = "newrelic-php5-${version}";
-  version = "6.2.0.158";
+  version = "6.4.0.163";
 
   src = fetchurl {
     url = "https://download.newrelic.com/php_agent/archive/${version}/${name}-linux.tar.gz";
-    sha256 = "0kyy8vh9k2jlx3lnzc8zajd1yjjj6h6zjs6az7n2r3zav0ahxlgr";
+    sha256 = "1qb77gn96arlcy4rvmr3c7br1y8hhz9n5979crrh3zywmdf0g1kv";
   };
 
   buildPhase = ":";
@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
     chmod +x $wrapped
 
     mkdir -p $out/extensions
-    cp agent/x64/newrelic-20131226.so $out/extensions/newrelic.so
+    cp agent/x64/newrelic-20151012.so $out/extensions/newrelic.so
   '';
 
   meta = with stdenv.lib; {
