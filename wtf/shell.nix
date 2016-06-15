@@ -39,6 +39,11 @@ let
           humanize_zero_is_ok
         fi
       '';
+      # Sleep a bit to allow data to flow back from the possibly remote target
+      memcached-get = key: target: sdk.writeBashScript "memcached-get-${key}.sh" ''
+        (echo get ${key} && sleep 1) \
+        | ${timeoutCmd} ${sdk.netcat-openbsd}/bin/nc ${replaceChars [":"] [" "] target}
+      '';
     in
     if check.http-ok != null then ''
         metric=0
@@ -58,13 +63,11 @@ let
         metric=$(${timeoutCmd} ${sdk.memcached-tool}/bin/memcached-tool ${target} stats | awk '$1 == "${key}" {print $2}')
       ''
     else if check.memcached-kvmetric != null then let inherit (check.memcached-kvmetric) key target; in ''
-      metric=$(echo get ${key} \
-                | ${timeoutCmd} nc ${replaceChars [":"] [" "] target} \
+      metric=$(${memcached-get key target} \
                 | awk '/^VALUE/ {exists=1; next}  exists { print $1; exit }')
       ''
     else if check.memcached-kvmetric-exists != null then let inherit (check.memcached-kvmetric-exists) key target; in ''
-      metric=$(echo get ${key} \
-                | ${timeoutCmd} nc ${replaceChars [":"] [" "] target} \
+      metric=$(${memcached-get key target} \
                 | awk -v exists=1 '/^VALUE/ {exists=0; next} END { print exists }')
       ${zero-is-ok true}
       ''
