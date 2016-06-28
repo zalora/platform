@@ -40,7 +40,7 @@ let
         fi
       '';
       # Sleep a bit to allow data to flow back from the possibly remote target
-      memcached-get = key: target: sdk.writeBashScript "memcached-get-${key}.sh" ''
+      memcached-get = key: target: sdk.writeBashScript "memcached-get.sh" ''
         (echo get ${key} && sleep 1) \
         | ${timeoutCmd} ${sdk.netcat-openbsd}/bin/nc ${replaceChars [":"] [" "] target}
       '';
