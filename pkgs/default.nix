@@ -527,8 +527,8 @@ in rec {
   # Adapted from
   # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L35-L40
   imagick = fns.buildPecl {
-    name = "imagick-3.4.0RC4";
-    sha256 = "0fdkzdv3r8sm6y1x11kp3rxsimq6zf15xvi0mhn57svmnan4zh0i";
+    name = "imagick-3.4.1";
+    sha256 = "1qa9jih2x0n3g9kaax0q8bcdqdmnpwjr5p319n14b88akvbgnad7";
     configureFlags = "--with-imagick=${pkgs.imagemagick}";
     buildInputs = [ pkgs.pkgconfig ];
   };
@@ -557,30 +557,20 @@ in rec {
   # Adapted from
   # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L95-L102
   xdebug = fns.buildPecl {
-    name = "xdebug-2.4.0RC3";
-
-    sha256 = "06ppsihw4cl8kxmywvic6wsm4ps9pvsns2vbab9ivrfyp8b6h5dy";
-
+    name = "xdebug-2.4.0";
+    sha256 = "01gfbvdwy4is31q3d2n4i8lzs6h40xim9angwws3arfi14kwnk9w";
     doCheck = true;
     checkTarget = "test";
   };
 
   # Adapted from
   # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L125-L140
-  # Not released yet
   zmq = fns.buildPecl rec {
-    name = "zmq-php7";
-
-    src = pkgs.fetchgit {
-      url = "https://github.com/mkoppanen/php-zmq";
-      rev = "94d2b87d195f870775b153b42c29f30da049f4db";
-      sha256 = "51a25b1029800d8abe03c5c08c50d6aee941c95c741dc22d2f853052511f4296";
-    };
-
+    name = "zmq-1.1.3";
+    sha256 = "1kj487vllqj9720vlhfsmv32hs2dy2agp6176mav6ldx31c3g4n4";
     configureFlags = [
       "--with-zmq=${pkgs.zeromq2}"
     ];
-
     buildInputs = [ pkgs.pkgconfig ];
   };
 }
