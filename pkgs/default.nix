@@ -524,26 +524,53 @@ in rec {
   # php libraries
   #
 
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L35-L40
   imagick = fns.buildPecl {
-    name = "imagick-3.1.2";
-    sha256 = "14vclf2pqcgf3w8nzqbdw0b9v30q898344c84jdbw2sa62n6k1sj";
+    name = "imagick-3.4.1";
+    sha256 = "1qa9jih2x0n3g9kaax0q8bcdqdmnpwjr5p319n14b88akvbgnad7";
+    configureFlags = "--with-imagick=${pkgs.imagemagick}";
     buildInputs = [ pkgs.pkgconfig ];
-    configureFlags = [
-      "--with-imagick=${imagemagick}"
-    ];
-
-    NIX_CFLAGS_COMPILE = "-I${imagemagick}/include/ImageMagick-6";
   };
 
-  # Because the package in Nixpkgs doesn't have --enable-memcached-json
-  memcached = fns.buildPecl {
-    name = "memcached-2.2.0";
-    sha256 = "0n4z2mp4rvrbmxq079zdsrhjxjkmhz6mzi7mlcipz02cdl7n1f8p";
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L66-L82
+  # Not released yet
+  memcached = fns.buildPecl rec {
+    name = "memcached-php7";
+
+    src = pkgs.fetchgit {
+      url = "https://github.com/php-memcached-dev/php-memcached";
+      rev = "e573a6e8fc815f12153d2afd561fc84f74811e2f";
+      sha256 = "13y5p6mrm4k9f6gn3iszfdjdn136myd00vbvwvngjbpg0jpgvb7p";
+    };
+
     configureFlags = [
       "--enable-memcached-json=yes"
       "--with-zlib-dir=${pkgs.zlib}"
       "--with-libmemcached-dir=${pkgs.libmemcached}"
     ];
+
     buildInputs = with pkgs; [ pkgconfig cyrus_sasl ];
+  };
+
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L95-L102
+  xdebug = fns.buildPecl {
+    name = "xdebug-2.4.0";
+    sha256 = "01gfbvdwy4is31q3d2n4i8lzs6h40xim9angwws3arfi14kwnk9w";
+    doCheck = true;
+    checkTarget = "test";
+  };
+
+  # Adapted from
+  # https://github.com/NixOS/nixpkgs/blob/bac26e08dbb6622c39bba13047c54e80282d031d/pkgs/top-level/php-packages.nix#L125-L140
+  zmq = fns.buildPecl rec {
+    name = "zmq-1.1.3";
+    sha256 = "1kj487vllqj9720vlhfsmv32hs2dy2agp6176mav6ldx31c3g4n4";
+    configureFlags = [
+      "--with-zmq=${pkgs.zeromq2}"
+    ];
+    buildInputs = [ pkgs.pkgconfig ];
   };
 }
