@@ -573,4 +573,15 @@ in rec {
     ];
     buildInputs = [ pkgs.pkgconfig ];
   };
+  
+  lz4 = fns.buildPecl rec {
+     name = "lz4";
+     src = pkgs.fetchFromGitHub {
+       owner = "kjdev";
+       repo = "php-ext-lz4";
+       rev = "4a718448323c0c4a18c46ee74bf9d13bde5a6543";
+       sha256 = "1j2fgg9pfy3gz14i8fr5wbfyrspibhqnxkx9fdfg9412cbs9whzl";
+     };
+     buildInputs = with pkgs; [ pkgconfig ];
+   };
 }
